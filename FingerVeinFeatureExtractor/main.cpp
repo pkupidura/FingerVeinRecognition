@@ -5,9 +5,12 @@
 using namespace cv;
 using namespace std;
 
-Mat extractFingerRegion(Mat mat, int, int);
-Mat extractFingerVeinsMaxCurvature(Mat originalImage, Mat fingerRegion, int sigma);
-
+Mat extractFingerRegion(Mat);
+Mat extractFingerVeinsMaxCurvature(Mat, Mat, int);
+Mat filterAndCalculateCurvatures(Mat, Mat, int);
+void trackVeinsCentres(Mat&); 
+Mat connectVeinCentres(Mat);
+Mat extractVeinsFromCentres(Mat);
 
 int main( int argc, char** argv )
 {
@@ -21,13 +24,9 @@ int main( int argc, char** argv )
         return -1;
     }
 
-    auto maskHeight = 24;
-    auto maskWidth = 32;
+	auto sigma = 3;
 
-    auto fingerRegion = extractFingerRegion(image, maskHeight, maskWidth);
-    auto sigma = 3;
-
-    auto veins = extractFingerVeinsMaxCurvature(image, fingerRegion, sigma);
+    auto veins = extractFingerVeinsMaxCurvature(image, sigma);
 
     namedWindow( "Display window", WINDOW_AUTOSIZE );    // Create a window for display.
     imshow( "Display window", veins );                   // Show our image inside it.
@@ -36,11 +35,26 @@ int main( int argc, char** argv )
     return 0;
 }
 
-Mat extractFingerVeinsMaxCurvature(Mat originalImage, Mat fingerRegion, int sigma) {
-    return originalImage;
+Mat extractFingerVeinsMaxCurvature(Mat originalImage, int sigma) {
+	Mat fingerRegion = extractFingerRegion(image);
+
+	Mat curvatures = filterAndCalculateCurvatures(originalImage, fingerRegion, sigma);
+	
+	Mat trackedVeins(originalImage.size(), originalImage.type());
+
+	trackVeinsCentres(trackedVeins);
+
+	Mat veinsCentres = connectVeinCentres(trackedVeins);
+
+	Mat veins = extractVeinsFromCentres(veinsCentres);
+
+    return veins;
 }
 
-Mat extractFingerRegion(Mat originalImage, int maskHeight, int maskWidth) {
+Mat extractFingerRegion(Mat originalImage) {
+	auto maskHeight = 24;
+	auto maskWidth = 32;
+
     auto imgHeigth = originalImage.size().height;
     auto imgWidth = originalImage.size().width;
 
