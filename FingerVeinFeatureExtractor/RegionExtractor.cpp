@@ -1,59 +1,9 @@
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <iostream>
+#include "Common.h"
 using namespace cv;
-using namespace std;
-
-Mat extractFingerRegion(Mat);
-Mat extractFingerVeinsMaxCurvature(Mat, Mat, int);
-Mat filterAndCalculateCurvatures(Mat, Mat, int);
-void trackVeinsCentres(Mat&); 
-Mat connectVeinCentres(Mat);
-Mat extractVeinsFromCentres(Mat);
-
-int main( int argc, char** argv )
-{
-    Mat image;
-    image = imread("finger.png", CV_LOAD_IMAGE_GRAYSCALE);   // Read the file
-    resize(image, image, cv::Size(image.size().width/2, image.size().height/2));
-
-    if(! image.data )                              // Check for invalid input
-    {
-        cout <<  "Could not open or find the image" << std::endl ;
-        return -1;
-    }
-
-	auto sigma = 3;
-
-    auto veins = extractFingerVeinsMaxCurvature(image, sigma);
-
-    namedWindow( "Display window", WINDOW_AUTOSIZE );    // Create a window for display.
-    imshow( "Display window", veins );                   // Show our image inside it.
-
-    waitKey(0);                                          // Wait for a keystroke in the window
-    return 0;
-}
-
-Mat extractFingerVeinsMaxCurvature(Mat originalImage, int sigma) {
-	Mat fingerRegion = extractFingerRegion(image);
-
-	Mat curvatures = filterAndCalculateCurvatures(originalImage, fingerRegion, sigma);
-	
-	Mat trackedVeins(originalImage.size(), originalImage.type());
-
-	trackVeinsCentres(trackedVeins);
-
-	Mat veinsCentres = connectVeinCentres(trackedVeins);
-
-	Mat veins = extractVeinsFromCentres(veinsCentres);
-
-    return veins;
-}
 
 Mat extractFingerRegion(Mat originalImage) {
-	auto maskHeight = 24;
-	auto maskWidth = 32;
+    auto maskHeight = 24;
+    auto maskWidth = 32;
 
     auto imgHeigth = originalImage.size().height;
     auto imgWidth = originalImage.size().width;
@@ -81,7 +31,7 @@ Mat extractFingerRegion(Mat originalImage) {
     auto delta = 0;
 
     cv::filter2D(originalImage, filteredImage, CV_64F, mask, anchor, delta, BORDER_REPLICATE);
-//return filteredImage;
+
     Mat imgFiltUp(floor(imgHeigth/2), imgWidth, CV_64F, double(0));
     Mat imgFiltLow(halfImgHeight, imgWidth, CV_64F, double(0));
 
@@ -103,7 +53,7 @@ Mat extractFingerRegion(Mat originalImage) {
     auto yLow = vector<int>();
 
     for (auto i = 0; i < imgFiltLow.cols; i++) {
-        auto currentMin = numeric_limits<int>::max();
+        auto currentMin = std::numeric_limits<int>::max();
         auto currentMinIndex = -1;
         for (auto j = 0; j < imgFiltLow.rows; j++) {
             auto val = filteredImage.at<double>(j, i);
