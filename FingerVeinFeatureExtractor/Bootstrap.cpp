@@ -12,6 +12,8 @@ int main( int argc, char** argv )
 {
     Mat image;
     image = imread("finger.png", CV_LOAD_IMAGE_GRAYSCALE);   // Read the file
+    double scale = (double)1/255;
+    image.convertTo(image, CV_64F, scale);
     resize(image, image, cv::Size(image.size().width/2, image.size().height/2));
 
     if(! image.data )                              // Check for invalid input
@@ -25,7 +27,7 @@ int main( int argc, char** argv )
     auto veins = extractFingerVeinsMaxCurvature(image, sigma);
 
     namedWindow( "Display window", WINDOW_AUTOSIZE );    // Create a window for display.
-    imshow( "Display window", veins );                   // Show our image inside it.
+    imshow( "Display window", image );                   // Show our image inside it.
 
     waitKey(0);                                          // Wait for a keystroke in the window
     return 0;

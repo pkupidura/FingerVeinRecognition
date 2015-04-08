@@ -15,7 +15,7 @@ Mat extractFingerRegion(Mat originalImage) {
     else
         halfImgHeight = ceil(imgHeigth / 2);
 
-    auto mask = Mat(maskHeight, maskWidth, CV_64F, double(0));
+    Mat mask(maskHeight, maskWidth, originalImage.type(), double(0));
 
     for (auto i = 0; i < mask.cols; i++) {
         for (auto j = 0; j < mask.rows; j++) {
@@ -30,10 +30,10 @@ Mat extractFingerRegion(Mat originalImage) {
     auto anchor = Point( -1, -1 );
     auto delta = 0;
 
-    cv::filter2D(originalImage, filteredImage, CV_64F, mask, anchor, delta, BORDER_REPLICATE);
+    cv::filter2D(originalImage, filteredImage, originalImage.type(), mask, anchor, delta, BORDER_REPLICATE);
 
-    Mat imgFiltUp(floor(imgHeigth/2), imgWidth, CV_64F, double(0));
-    Mat imgFiltLow(halfImgHeight, imgWidth, CV_64F, double(0));
+    Mat imgFiltUp(floor(imgHeigth/2), imgWidth, originalImage.type(), double(0));
+    Mat imgFiltLow(halfImgHeight, imgWidth, originalImage.type(), double(0));
 
     auto yUp = vector<int>();
 
@@ -65,7 +65,7 @@ Mat extractFingerRegion(Mat originalImage) {
         yLow.push_back(currentMinIndex);
     }
 
-    Mat region(originalImage.size(), CV_64F, double(0));
+    Mat region(originalImage.size(), originalImage.type(), double(0));
 
     for (auto i = 0; i < region.cols; i++) {
         for (auto j = 0; j < region.rows; j++) {
