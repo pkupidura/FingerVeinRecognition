@@ -66,57 +66,57 @@ Mat filterAndCalculateCurvatures(Mat originalImage, Mat fingerRegion, int sigma)
 
     int sizes[] = {originalImage.rows, originalImage.cols, 4};
 
-    Mat k(3, sizes, originalImage.type(), Scalar(double(0)));
+    Mat k(3, sizes, originalImage.type(), Scalar(DATA_TYPE(0)));
 
     Mat fxSqr, k1result;
     pow(fx, 2, fxSqr);
     fxSqr = fxSqr + 1;
-    pow(fxSqr, double(3/2), fxSqr);
+    pow(fxSqr, DATA_TYPE(3/2), fxSqr);
     divide(fxx, fxSqr, k1result);
     multiply(k1result, fingerRegion, k1result);
 
     for(auto i = 0; i < originalImage.rows; i++) {
         for (auto j = 0; j < originalImage.cols; j++) {
-            k.at<double>(i, j, 0) = k1result.at<double>(i, j);
+            k.at<DATA_TYPE>(i, j, 0) = k1result.at<DATA_TYPE>(i, j);
         }
     }
 
     Mat fySqr, k2result;
     pow(fy, 2, fySqr);
     fySqr = fySqr + 1;
-    pow(fySqr, double(3/2), fySqr);
+    pow(fySqr, DATA_TYPE(3/2), fySqr);
     divide(fyy, fySqr, k2result);
     multiply(k2result, fingerRegion, k2result);
 
     for(auto i = 0; i < originalImage.rows; i++) {
         for (auto j = 0; j < originalImage.cols; j++) {
-            k.at<double>(i, j, 1) = k2result.at<double>(i, j);
+            k.at<DATA_TYPE>(i, j, 1) = k2result.at<DATA_TYPE>(i, j);
         }
     }
 
     Mat f1Sqr, k3result;
     pow(f1, 2, f1Sqr);
     f1Sqr = f1Sqr + 1;
-    pow(f1Sqr, double(3/2), f1Sqr);
+    pow(f1Sqr, DATA_TYPE(3/2), f1Sqr);
     divide(f11, f1Sqr, k3result);
     multiply(k3result, fingerRegion, k3result);
 
     for(auto i = 0; i < originalImage.rows; i++) {
         for (auto j = 0; j < originalImage.cols; j++) {
-            k.at<double>(i, j, 2) = k3result.at<double>(i, j);
+            k.at<DATA_TYPE>(i, j, 2) = k3result.at<DATA_TYPE>(i, j);
         }
     }
 
     Mat f2Sqr, k4result;
     pow(f2, 2, f2Sqr);
     f2Sqr = f2Sqr + 1;
-    pow(f2Sqr, double(3/2), f2Sqr);
+    pow(f2Sqr, DATA_TYPE(3/2), f2Sqr);
     divide(f22, f2Sqr, k4result);
     multiply(k4result, fingerRegion, k4result);
 
     for(auto i = 0; i < originalImage.rows; i++) {
         for (auto j = 0; j < originalImage.cols; j++) {
-            k.at<double>(i, j, 3) = k4result.at<double>(i, j);
+            k.at<DATA_TYPE>(i, j, 3) = k4result.at<DATA_TYPE>(i, j);
         }
     }
 
@@ -143,13 +143,11 @@ Mat generateFilter2(Mat X, Mat hMat, int sigma) {
     return result;
 }
 
-
 Mat generateFilter1(Mat X, Mat hMat, int sigma) {
     Mat copy = X.clone();
     copy = -copy;
     copy = copy / (sigma * sigma);
     Mat result(copy.size(), copy.type());
-    std::cout << copy << std::endl;
     multiply(copy, hMat, result);
     return result;
 }
@@ -168,8 +166,6 @@ Mat generateFilter0(Mat X, Mat Y, int sigma) {
     Mat exponent = divided;
     exp(divided, exponent);
     Mat result = exponent * factor1;
-
-    multiply(result, exponent, result);
 
     return result;
 }

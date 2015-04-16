@@ -44,7 +44,6 @@ f1  = 0.5*sqrt(2)*(fx + fy); % \
 f2  = 0.5*sqrt(2)*(fx - fy); % /
 f11 = 0.5*fxx + fxy + 0.5*fyy; % \\
 f22 = 0.5*fxx - fxy + 0.5*fyy; % //
-
 [img_h, img_w] = size(img); % Image height and width
 
 %% Calculate curvatures
@@ -56,7 +55,7 @@ k(:,:,4) = (f22./((1 + f2.^2).^(3/2))).*fvr; % /
 
 %% Scores
 %V = zeros(img_h, img_w, 4);
-Vt = zeros(img_h, img_w, 4);
+Vt = zeros(img_h, img_w);
 Wr = 0;
 
 % Horizontal direction

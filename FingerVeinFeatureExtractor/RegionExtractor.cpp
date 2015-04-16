@@ -15,14 +15,14 @@ Mat extractFingerRegion(Mat originalImage) {
     else
         halfImgHeight = ceil(imgHeigth / 2);
 
-    Mat mask(maskHeight, maskWidth, originalImage.type(), double(0));
+    Mat mask(maskHeight, maskWidth, originalImage.type(), DATA_TYPE(0));
 
     for (auto i = 0; i < mask.cols; i++) {
         for (auto j = 0; j < mask.rows; j++) {
             if (j < maskHeight / 2)
-                mask.at<double>(j, i) = -1;
+                mask.at<DATA_TYPE>(j, i) = -1;
             else
-                mask.at<double>(j, i) = 1;
+                mask.at<DATA_TYPE>(j, i) = 1;
         }
     }
 
@@ -32,8 +32,8 @@ Mat extractFingerRegion(Mat originalImage) {
 
     cv::filter2D(originalImage, filteredImage, originalImage.type(), mask, anchor, delta, BORDER_REPLICATE);
 
-    Mat imgFiltUp(floor(imgHeigth/2), imgWidth, originalImage.type(), double(0));
-    Mat imgFiltLow(halfImgHeight, imgWidth, originalImage.type(), double(0));
+    Mat imgFiltUp(floor(imgHeigth/2), imgWidth, originalImage.type(), DATA_TYPE(0));
+    Mat imgFiltLow(halfImgHeight, imgWidth, originalImage.type(), DATA_TYPE(0));
 
     auto yUp = vector<int>();
 
@@ -41,7 +41,7 @@ Mat extractFingerRegion(Mat originalImage) {
         auto currentMax = -1;
         auto currentMaxIndex = -1;
         for (auto j = 0; j < imgFiltUp.rows; j++) {
-            auto val = filteredImage.at<double>(j, i);
+            auto val = filteredImage.at<DATA_TYPE>(j, i);
             if (val > currentMax) {
                 currentMax = val;
                 currentMaxIndex = j;
@@ -53,10 +53,10 @@ Mat extractFingerRegion(Mat originalImage) {
     auto yLow = vector<int>();
 
     for (auto i = 0; i < imgFiltLow.cols; i++) {
-        auto currentMin = std::numeric_limits<int>::max();
+        auto currentMin = std::numeric_limits<DATA_TYPE>::max();
         auto currentMinIndex = -1;
         for (auto j = 0; j < imgFiltLow.rows; j++) {
-            auto val = filteredImage.at<double>(j, i);
+            auto val = filteredImage.at<DATA_TYPE>(j, i);
             if (val < currentMin) {
                 currentMin = val;
                 currentMinIndex = j;
@@ -65,12 +65,12 @@ Mat extractFingerRegion(Mat originalImage) {
         yLow.push_back(currentMinIndex);
     }
 
-    Mat region(originalImage.size(), originalImage.type(), double(0));
+    Mat region(originalImage.size(), originalImage.type(), DATA_TYPE(0));
 
     for (auto i = 0; i < region.cols; i++) {
         for (auto j = 0; j < region.rows; j++) {
             if (j >= yUp[i] && j <= (yLow[i] + imgFiltLow.size().height - 1))
-                region.at<double>(j, i) = 1;
+                region.at<DATA_TYPE>(j, i) = 1;
         }
     }
 
