@@ -10,8 +10,8 @@ using namespace cv;
 //#define IMAGE_AS_DOUBLE
 
 #ifndef IMAGE_AS_DOUBLE
-#define IMAGE_TYPE CV_32F
-#define DATA_TYPE float
+#define IMAGE_TYPE CV_64F
+#define DATA_TYPE double
 #else
 #define IMAGE_TYPE CV_64F
 #define DATA_TYPE double

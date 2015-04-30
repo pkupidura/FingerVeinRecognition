@@ -14,8 +14,9 @@ int main( int argc, char** argv )
     double scale = (double)1/255;
     equalizeHist(image, image);
     Mat temp;
-    cv::GaussianBlur(image, temp, cv::Size(0, 0), 3);
-    cv::addWeighted(image, 1.5, temp, -0.5, 0, temp);
+    image.convertTo(temp, -1, 0.65, 0);
+    cv::GaussianBlur(temp, temp, cv::Size(0, 0), 3);
+    cv::addWeighted(image, 1.5, temp, -1.10 , 0, temp);
     image = temp;
     image.convertTo(image, IMAGE_TYPE, scale);
     resize(image, image, cv::Size(image.size().width/2, image.size().height/2));
@@ -33,7 +34,7 @@ int main( int argc, char** argv )
     for (auto i = 0; i < veins.rows; i++)
         for (auto j = 0; j < veins.cols; j++) {
             auto val = veins.at<DATA_TYPE>(i, j);
-            if (val >= DATA_TYPE(0.5))
+            if (val >= DATA_TYPE(0.005))
                 veins.at<DATA_TYPE>(i, j) = DATA_TYPE(1);
             else if (val < DATA_TYPE(0))
                 veins.at<DATA_TYPE>(i, j) = DATA_TYPE(0);
@@ -53,9 +54,9 @@ Mat extractFingerVeinsMaxCurvature(Mat originalImage, int sigma) {
 
 	auto curvatures = filterAndCalculateCurvatures(originalImage, fingerRegion, sigma);
 
+    namedWindow("temp", WINDOW_AUTOSIZE);
+
     auto trackedVeins = trackVeinsCentres(curvatures, originalImage.size());
 
-	auto veins = extractVeinsFromCentres(trackedVeins);
-
-    return veins;
+    return extractVeinsFromCentres(trackedVeins);
 }

@@ -7,11 +7,11 @@ Mat trackVeinsCentres(Mat curvatures, cv::Size imageSize) {
 
     for (auto x = 0; x < imageSize.height; x++) {
         for (auto y = 0; y < imageSize.width; y++) {
-            if (curvatures.at<DATA_TYPE>(x, y, 0))
+            if (curvatures.at<DATA_TYPE>(x, y, 0) > 0)
                 wr++;
 
             if (wr > 0 &&
-                    (y == imageSize.width - 1 || (curvatures.at<DATA_TYPE>(x, y, 0) != 0))) {
+                    (y == imageSize.width - 1 || (curvatures.at<DATA_TYPE>(x, y, 0) <= 0))) {
                 int pos_end;
                 if (y == imageSize.width - 1)
                     pos_end = y;
@@ -41,11 +41,11 @@ Mat trackVeinsCentres(Mat curvatures, cv::Size imageSize) {
 
     for (auto y = 0; y < imageSize.width; y++) {
         for (auto x = 0; x < imageSize.height; x++) {
-            if (curvatures.at<DATA_TYPE>(x, y, 1))
+            if (curvatures.at<DATA_TYPE>(x, y, 1) > 0)
                 wr++;
 
             if (wr > 0 &&
-                (x == imageSize.height - 1 || (curvatures.at<DATA_TYPE>(x, y, 1) != 0))) {
+                (x == imageSize.height - 1 || (curvatures.at<DATA_TYPE>(x, y, 1) <= 0))) {
                 int pos_end;
                 if (x == imageSize.height - 1)
                     pos_end = x;
@@ -90,7 +90,7 @@ Mat trackVeinsCentres(Mat curvatures, cv::Size imageSize) {
 
             if (wr > 0 &&
                     (y == imageSize.height - 1 || x == imageSize.width - 1 ||
-                            curvatures.at<DATA_TYPE>(y, x, 2) != 0)) {
+                            curvatures.at<DATA_TYPE>(y, x, 2) <= 0)) {
                 int pos_x_end, pos_y_end;
                 if (y == imageSize.height - 1 || x == imageSize.width - 1) {
                     pos_x_end = x;
@@ -149,7 +149,7 @@ Mat trackVeinsCentres(Mat curvatures, cv::Size imageSize) {
 
             if (wr > 0 &&
                 (y == 0 || (x == imageSize.width - 1) ||
-                        (curvatures.at<DATA_TYPE>(y, x, 3) != 0))) {
+                        (curvatures.at<DATA_TYPE>(y, x, 3) <= 0))) {
                 int pos_x_end, pos_y_end;
                 if (y == 0 || x == imageSize.width - 1) {
                     pos_x_end = x;
