@@ -34,14 +34,14 @@ int main( int argc, char** argv )
     for (auto i = 0; i < veins.rows; i++)
         for (auto j = 0; j < veins.cols; j++) {
             auto val = veins.at<DATA_TYPE>(i, j);
-            if (val >= DATA_TYPE(0.005))
+            if (val >= DATA_TYPE(0.01))
                 veins.at<DATA_TYPE>(i, j) = DATA_TYPE(1);
             else if (val < DATA_TYPE(0))
                 veins.at<DATA_TYPE>(i, j) = DATA_TYPE(0);
         }
 
-    namedWindow( "1", WINDOW_AUTOSIZE );    // Create a window for display.
-    imshow( "1", veins );                   // Show our image inside it.
+    namedWindow("1", WINDOW_AUTOSIZE );    // Create a window for display.
+    imshow("1", veins );                   // Show our image inside it.
     namedWindow("2", WINDOW_AUTOSIZE);
     imshow("2", image);
 
@@ -53,8 +53,6 @@ Mat extractFingerVeinsMaxCurvature(Mat originalImage, int sigma) {
 	auto fingerRegion = extractFingerRegion(originalImage);
 
 	auto curvatures = filterAndCalculateCurvatures(originalImage, fingerRegion, sigma);
-
-    namedWindow("temp", WINDOW_AUTOSIZE);
 
     auto trackedVeins = trackVeinsCentres(curvatures, originalImage.size());
 

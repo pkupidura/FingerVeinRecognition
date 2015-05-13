@@ -38,7 +38,7 @@ Mat extractFingerRegion(Mat originalImage) {
     auto yUp = vector<int>();
 
     for (auto i = 0; i < imgFiltUp.cols; i++) {
-        auto currentMax = -1;
+        auto currentMax = std::numeric_limits<DATA_TYPE>::min();
         auto currentMaxIndex = -1;
         for (auto j = 0; j < imgFiltUp.rows; j++) {
             auto val = filteredImage.at<DATA_TYPE>(j, i);
@@ -71,6 +71,8 @@ Mat extractFingerRegion(Mat originalImage) {
         for (auto j = 0; j < region.rows; j++) {
             if (j >= yUp[i] && j <= (yLow[i] + imgFiltLow.size().height - 1))
                 region.at<DATA_TYPE>(j, i) = 1;
+            else
+                region.at<DATA_TYPE>(j, i) = 0;
         }
     }
 
