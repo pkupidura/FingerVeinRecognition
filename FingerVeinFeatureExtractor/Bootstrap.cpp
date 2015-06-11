@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
     cv::addWeighted(image, 1.5, temp, -1.10, 0, temp);
     image = temp;
     image.convertTo(image, IMAGE_TYPE, scale);
-    resize(image, image, cv::Size(image.size().width / 2, image.size().height / 2));
+    resize(image, image, cv::Size(390, image.size().height / 2));
 
     if (!image.data)                              // Check for invalid input
     {
@@ -38,6 +38,8 @@ int main(int argc, char **argv) {
 
     auto veins = extractFingerVeinsMaxCurvature(image, sigma);
 
+    namedWindow("bin", WINDOW_AUTOSIZE);    // Create a window for display.
+    imshow("bin", veins);
     for (auto i = 0; i < veins.rows; i++)
         for (auto j = 0; j < veins.cols; j++) {
             auto val = veins.at<DATA_TYPE>(i, j);
@@ -47,13 +49,18 @@ int main(int argc, char **argv) {
                 veins.at<DATA_TYPE>(i, j) = DATA_TYPE(0);
         }
 
-    char* title = "Vein extraction";
-    cvShowManyImages(title, 2, image, veins);
-
     namedWindow("1", WINDOW_AUTOSIZE);    // Create a window for display.
     imshow("1", veins);                   // Show our image inside it.
     namedWindow("2", WINDOW_AUTOSIZE);
     imshow("2", image);
+
+    Mat matlabResult;
+    matlabResult = imread("matlab_result.png", CV_LOAD_IMAGE_GRAYSCALE);
+    matlabResult.convertTo(matlabResult, IMAGE_TYPE, scale);
+    namedWindow("matlab_result", WINDOW_AUTOSIZE);
+    imshow("matlab_result", matlabResult);
+
+    int cw = 80, ch = 30;
 
     waitKey(0);                                          // Wait for a keystroke in the window
     return 0;
@@ -62,9 +69,15 @@ int main(int argc, char **argv) {
 Mat extractFingerVeinsMaxCurvature(Mat originalImage, int sigma) {
     auto fingerRegion = extractFingerRegion(originalImage);
 
+    namedWindow("finger region", WINDOW_AUTOSIZE);
+    imshow("finger region", fingerRegion);
+
     auto curvatures = filterAndCalculateCurvatures(originalImage, fingerRegion, sigma);
 
     auto trackedVeins = trackVeinsCentres(curvatures, originalImage.size());
+
+    namedWindow("tracked veins", WINDOW_AUTOSIZE);
+    imshow("tracked veins", trackedVeins);
 
     return extractVeinsFromCentres(trackedVeins, fingerRegion);
 }
