@@ -38,8 +38,6 @@ int main(int argc, char **argv) {
 
     auto veins = extractFingerVeinsMaxCurvature(image, sigma);
 
-    namedWindow("bin", WINDOW_AUTOSIZE);    // Create a window for display.
-    imshow("bin", veins);
     for (auto i = 0; i < veins.rows; i++)
         for (auto j = 0; j < veins.cols; j++) {
             auto val = veins.at<DATA_TYPE>(i, j);
@@ -49,16 +47,14 @@ int main(int argc, char **argv) {
                 veins.at<DATA_TYPE>(i, j) = DATA_TYPE(0);
         }
 
-    namedWindow("1", WINDOW_AUTOSIZE);    // Create a window for display.
-    imshow("1", veins);                   // Show our image inside it.
-    namedWindow("2", WINDOW_AUTOSIZE);
-    imshow("2", image);
+    namedWindow("extracted veins", WINDOW_AUTOSIZE);    // Create a window for display.
+    imshow("extracted veins", veins);                   // Show our image inside it.
+    namedWindow("initial image", WINDOW_AUTOSIZE);
+    imshow("initial image", image);
 
     Mat matlabResult;
     matlabResult = imread("matlab_result.png", CV_LOAD_IMAGE_GRAYSCALE);
     matlabResult.convertTo(matlabResult, IMAGE_TYPE, scale);
-    namedWindow("matlab_result", WINDOW_AUTOSIZE);
-    imshow("matlab_result", matlabResult);
 
     int cw = 80, ch = 30;
 

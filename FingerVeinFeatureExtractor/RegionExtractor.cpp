@@ -1,4 +1,6 @@
 #include "Common.h"
+#include <vector>
+
 using namespace cv;
 
 Mat extractFingerRegion(Mat originalImage) {
@@ -35,7 +37,7 @@ Mat extractFingerRegion(Mat originalImage) {
     Mat imgFiltUp(floor(imgHeigth/2), imgWidth, originalImage.type(), DATA_TYPE(0));
     Mat imgFiltLow(halfImgHeight, imgWidth, originalImage.type(), DATA_TYPE(0));
 
-    auto yUp = vector<int>();
+    auto yUp = std::vector<int>();
 
     for (auto i = 0; i < imgFiltUp.cols; i++) {
         auto currentMax = std::numeric_limits<DATA_TYPE>::min();
@@ -50,7 +52,7 @@ Mat extractFingerRegion(Mat originalImage) {
         yUp.push_back(currentMaxIndex);
     }
 
-    auto yLow = vector<int>();
+    auto yLow = std::vector<int>();
 
     for (auto i = 0; i < imgFiltLow.cols; i++) {
         auto currentMin = std::numeric_limits<DATA_TYPE>::max();
